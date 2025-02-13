@@ -101,3 +101,52 @@ function updateDom(parent, newVNode, oldVNode, index = 0) {
         }
     }
 }
+
+
+// --- Función para actualizar solo los atributos modificados ---
+function updateAttributes(domElement, newProps, oldProps) {
+    // Eliminar atributos que ya no existen
+    for (const key in oldProps) {
+        if (key === "children") continue;
+
+        if (!(key in newProps)) {
+            if (key.startsWith("on")) {
+                const eventName = key.slice(2).toLowerCase();
+                domElement.removeEventListener(eventName, oldProps[key]);
+            } else {
+                domElement.removeAttribute(key);
+            }
+        }
+    }
+
+    // Agregar o actualizar atributos y eventos
+    for (const key in newProps) {
+        if (key === "children") continue;
+
+        const newValue = newProps[key];
+        const oldValue = oldProps[key];
+
+        if (newValue !== oldValue) {
+            if (key.startsWith("on")) {
+                // Manejo de eventos
+                const eventName = key.slice(2).toLowerCase();
+                if (oldValue) {
+                    domElement.removeEventListener(eventName, oldValue);
+                }
+                domElement.addEventListener(eventName, newValue);
+            } else if (newValue == null || newValue === false) {
+                // Remover atributos nulos o falsos
+                domElement.removeAttribute(key);
+            } else if (key === "className") {
+                // Manejo especial para clases CSS
+                domElement.setAttribute("class", newValue);
+            } else if (key === "value") {
+                // Manejo especial para inputs
+                domElement.value = newValue;
+            } else {
+                // Atributos normales
+                domElement.setAttribute(key, newValue);
+            }
+        }
+    }
+}
