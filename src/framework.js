@@ -150,3 +150,11 @@ function updateAttributes(domElement, newProps, oldProps) {
         }
     }
 }
+
+
+// --- Renderizado en el DOM con reconciliación ---
+let currentVNode = null;
+export function render(vNode, container) {
+    updateDom(container, vNode, currentVNode);
+    currentVNode = vNode;
+}
