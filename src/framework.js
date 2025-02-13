@@ -20,3 +20,15 @@ export class Store {
     }
 }
 
+// --- Dispatcher ---
+export const Dispatcher = {
+    stores: [],
+
+    register(store) {
+        this.stores.push(store);
+    },
+
+    dispatch(action) {
+        this.stores.forEach(store => store.handleAction(action));
+    }
+};
