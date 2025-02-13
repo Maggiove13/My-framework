@@ -32,3 +32,11 @@ export const Dispatcher = {
         this.stores.forEach(store => store.handleAction(action));
     }
 };
+
+// --- Función para crear elementos virtuales (JSX) ---
+export function createElement(type, props, ...children) {
+    return {
+        type,
+        props: { ...props, children: children.flat() }
+    };
+}
