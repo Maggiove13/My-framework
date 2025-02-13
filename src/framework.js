@@ -72,3 +72,32 @@ export function createDom(vNode) {
 
     return dom;
 }
+
+
+// --- Función de reconciliación (Actualización eficiente del DOM) ---
+function updateDom(parent, newVNode, oldVNode, index = 0) {
+    if (!oldVNode) {
+        parent.appendChild(createDom(newVNode));
+    } else if (!newVNode) {
+        parent.removeChild(parent.childNodes[index]);
+    } else if (typeof newVNode === "string" || typeof oldVNode === "string") {
+        if (newVNode !== oldVNode) {
+            parent.replaceChild(createDom(newVNode), parent.childNodes[index]);
+        }
+    } else if (newVNode.type !== oldVNode.type) {
+        parent.replaceChild(createDom(newVNode), parent.childNodes[index]);
+    } else {
+        // Actualizar atributos
+        const domElement = parent.childNodes[index];
+        updateAttributes(domElement, newVNode.props, oldVNode.props);
+
+        // Reconciliar hijos
+        const newChildren = newVNode.props.children || [];
+        const oldChildren = oldVNode.props.children || [];
+        const max = Math.max(newChildren.length, oldChildren.length);
+
+        for (let i = 0; i < max; i++) {
+            updateDom(domElement, newChildren[i], oldChildren[i], i);
+        }
+    }
+}
