@@ -7,7 +7,7 @@ export class Store {
     }
 
     getState() {
-        return this.state;
+        return this.state; // Devuelve copia del estado actual
     }
 
     subscribe(listener) {
@@ -68,7 +68,11 @@ export function createDom(vNode) {
     }
 
     // Renderizar hijos
-    (vNode.props.children || []).forEach(child => dom.appendChild(createDom(child)));
+    const children = vNode.props.children || [];
+    children.forEach(child => {
+        const childDom = createDom(child);
+        dom.appendChild(childDom);
+    });
 
     return dom;
 }
